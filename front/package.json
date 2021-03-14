@@ -1,0 +1,25 @@
+{
+  "name": "front",
+  "version": "1.0.0",
+  "description": "front code challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "raphael moura",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.8.2",
+    "angular-drag-and-drop-lists": "^2.1.0",
+    "angular-dragdrop": "^1.0.13",
+    "angular-route": "^1.8.2",
+    "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
+    "crypto-js": "^4.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-sass": "^4.1.0",
+    "node-sass": "^5.0.0"
+  }
+}

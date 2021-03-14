@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html ng-app="app">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta http-equiv="content-language" content="pt-br" />
+      <title>TODO - Code Challenge</title>
+      <base href="/" />
+      <link type="text/css" rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" />
+      <link type="text/css" rel="stylesheet" href="./assets/css/index.css" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body class="{{bodylayout}}">
+      
+      <div ng-view></div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+      <script src="./node_modules/angular/angular.js"></script>
+      <script src="./node_modules/angular-route/angular-route.js"></script>
+      <script type="text/javascript" src="./node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"></script>
+      <script type="text/javascript" src="./node_modules/crypto-js/crypto-js.js"></script>
+      <!--
+      <script src="./node_modules/angular-dragdrop/src/angular-dragdrop.js"></script>-->
+
+      <script src="./app/app.module.js"></script>
+      <script src="./app/components/home/home.module.js"></script>
+      <script src="./app/components/home/home.service.js"></script>
+      <script src="./app/components/home/home.controller.js"></script>
+   </body>
+</html>

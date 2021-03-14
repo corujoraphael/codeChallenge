@@ -1,0 +1,227 @@
+<div ng-controller="HomeController">
+	<div class="container">
+		<div class="list">
+			<div class="list__header">
+				Pendentes
+				<button class="add"
+					ng-click="changeModal(true)"
+				>
+					Incluir tarefa
+				</button>
+			</div>
+			<div class="list__content" >
+				<ul 
+					class="list__content__list"
+					dnd-list="pendingTasks"
+					ng-if="!loading.all && !loading.pending"
+					dnd-drop="changeStatus(index, item, external, type, 'pending')"
+				>	
+					<li 
+						class="list__item"
+						ng-repeat="item in pendingTasks track by $index"
+						dnd-draggable="item"
+						dnd-effect-allowed="move"
+						dnd-selected="selected = item"
+						ng-class="{'selected': selected === item}"
+						draggable="true"
+						dnd-external-sources="true"
+					>
+						{{item.description}}
+					</li>
+				</ul>
+				<div ng-if="loading.all || loading.pending" class="spinner-border text-primary" role="status">
+					<span class="sr-only">Carregado...</span>
+				</div>
+				<button 
+					class="idle btn"
+					ng-if="pendingTasks.length == 0"
+					ng-click="getIdleData()"
+				>
+					Estou sem tarefas
+				</button>
+			</div>
+		</div>
+		<div class="list">
+			<div class="list__header completed">
+				Completos
+			</div>
+			<div class="list__content">
+				<ul 
+					class="list__content__list"
+					dnd-list="completedTasks"
+					ng-if="!loading.all"
+					dnd-drop="changeStatus(index, item, external, type, 'complete')"
+				>	
+					<li 
+						class="list__item"
+						ng-repeat="item in completedTasks track by $index"
+						dnd-draggable="item"
+						dnd-effect-allowed="move"
+						dnd-selected="selected = item"
+						ng-class="{'selected': selected === item, 'blocked': item.block_pending == 2}"
+    					dnd-disable-if="item.block_pending == 2"
+						draggable="item.block_pending < 2"
+						dnd-external-sources="true"
+					>
+						{{item.description}}
+					</li>
+				</ul>
+				<div ng-if="loading.all" class="spinner-border text-primary" role="status">
+					<span class="sr-only">Carregado...</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" ng-if="adding">
+		<div class="modal-backdrop"></div>
+		<div class="modal-dialog">
+			<div class="modal-content">
+	 			<div class="modal-header">
+					<h5 class="modal-title">Incluir uma tarefa</h5>
+					<button 
+						type="button" 
+						class="close" 
+						ng-click="changeModal(false)" 
+						aria-label="Fechar"
+						ng-disabled="loading.modal" 
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+	 			</div>
+				<div class="modal-body">
+					<form name="forms.addTaskForm" class="add_form">
+						<label>Descrição</label>
+						<textarea 
+							class="form-control" 
+							required 
+							name="description" 
+							ng-model="task.description"
+							ng-class="{'error':forms.addTaskForm.description.$dirty && forms.addTaskForm.description.$invalid}"
+							ng-disabled="loading.modal" 
+						></textarea>
+						<p class="error" 
+							ng-if="forms.addTaskForm.description.$dirty && forms.addTaskForm.description.$invalid"
+						>
+							Preecha uma descrição
+						</p>
+
+						<label>Nome do responsável</label>
+						<input 
+							type="text" 
+							class="form-control" 
+							name="name" 
+							required 
+							ng-model="task.name"
+							ng-class="{'error':forms.addTaskForm.name.$dirty && forms.addTaskForm.name.$invalid}"
+							ng-disabled="loading.modal" 
+						/>
+						<p class="error" 
+							ng-if="forms.addTaskForm.name.$dirty && forms.addTaskForm.name.$invalid"
+						>
+							Preecha o nome do responsável
+						</p>
+
+						<label>Email do responsável</label>
+						<input 
+							type="email"
+							name="email"
+							class="form-control"
+							required 
+							ng-model="task.email"
+							ng-class="{'error':forms.addTaskForm.email.$dirty && forms.addTaskForm.email.$invalid}"
+							ng-disabled="loading.modal === true" 
+						/>
+						<p class="error" 
+							ng-if="forms.addTaskForm.email.$dirty && forms.addTaskForm.email.$invalid"
+						>
+							Preecha com um email válido. {{ didYouMean ? 'Você quis digitar: ' + didYouMean : ''}}
+						</p>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button 
+						type="button" 
+						class="btn btn-secondary" 
+						ng-click="changeModal(false)"
+						ng-disabled="loading.modal" 
+					>
+						Cancelar
+					</button>
+					<button 
+						type="button"
+						class="btn btn-primary"
+						ng-click="handleClick()"
+						ng-disabled="loading.modal || addTaskForm.$pristine || addTaskForm.$invalid "
+					>
+						<p ng-if="!loading.modal">Salvar</p>
+						<div ng-if="loading.modal" class="spinner-border" role="status">
+							<span class="sr-only">Carregado...</span>
+						</div>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" ng-show="supervisorAuth">
+		<div class="modal-backdrop"></div>
+		<div class="modal-dialog">
+			<div class="modal-content">
+	 			<div class="modal-header">
+					<h5 class="modal-title">Autentique a modificação</h5>
+					<button 
+						type="button" 
+						class="close" 
+						ng-click="changeModalAuth(false)" 
+						aria-label="Fechar"
+						ng-disabled="loading.modalAuth" 
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+	 			</div>
+				<div class="modal-body">
+					<form name="forms.authForm" class="add_form">
+						<label>Senha {{password}}</label>
+						<input 
+							type="password" 
+							class="form-control" 
+							name="authPass" 
+							required 
+							ng-model="authPass"
+							ng-class="{'error':forms.authForm.authPass.$dirty && forms.authForm.authPass.$invalid}"
+							ng-disabled="loading.modalAuth" 
+						/>
+						<p class="error" 
+							ng-if="forms.authForm.authPass.$dirty && forms.authForm.authPass.$invalid"
+						>	
+
+							Digite uma senha válida
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button 
+						type="button" 
+						class="btn btn-secondary" 
+						ng-click="changeModalAuth(false)"
+						ng-disabled="loading.modalAuth" 
+					>
+						Cancelar
+					</button>
+					<button 
+						type="button"
+						class="btn btn-primary"
+						ng-click="handleClickAuth()"
+						ng-disabled="loading.modalAuth || authForm.$pristine || authForm.$invalid "
+					>
+						<p ng-if="!loading.modalAuth">Salvar</p>
+						<div ng-if="loading.modalAuth" class="spinner-border" role="status">
+							<span class="sr-only">Carregado...</span>
+						</div>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

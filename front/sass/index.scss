@@ -1,0 +1,141 @@
+$primary: rgb(55, 103, 177);
+$secondary: rgb(74, 186, 88);
+
+body{
+	.container, .container-fluid{
+		display: flex;
+		box-sizing: centent;
+		flex-direction: column;
+		padding: 0;
+		@media (min-width: 768px){
+			flex-direction: row;
+		}
+		.list{
+			flex: 1;
+			min-height: 50vh;
+			max-height: 50vh;
+			overflow-y: hidden;
+			@media (min-width: 768px){
+				margin: 20px 20px;
+				min-height: calc( 100vh - 50px);
+				max-height: auto;
+			}
+			
+			&__header{
+				background-color: $primary;
+				text-align: center;
+				color: #fff;
+				padding: 5px;
+				border-top-right-radius: 10px;
+				border-top-left-radius: 10px;
+				position: relative;
+
+				&.completed{
+					background-color: $secondary;
+				}
+
+				.add{
+					text-decoration: underline;
+					border: 0;
+					background-color: transparent;
+					text-align: right;
+					width: 100%;
+					padding: 0;
+					color: #fff;
+					position: absolute;
+					right: 20px;
+				}
+			}
+
+			&__content{
+				border-bottom-right-radius: 10px;
+				border-bottom-left-radius: 10px;
+				box-shadow: 0px 4px 10px rgba(0, 0, 0, .1);
+				border: 0.5px solid #D0D0D0;
+				max-height: 46vh;
+				@media (min-width: 768px){
+					height: calc( 100vh - 100px);
+					max-height: 100vh;
+				}
+				overflow-y: auto;
+				display: block;
+				 user-select: none;
+
+				&__list{
+					list-style: none;
+					padding:  10px 20px;
+					min-height: 90%;
+					margin: 0;
+					user-select: none;
+					
+					.dndPlaceholder {
+   						border-radius: 3px;
+   						display: block;
+    					min-height: 42px;
+					}
+				}
+
+
+				.idle{
+					margin: 0 auto;
+					background-color: $primary;
+					color: #fff;
+					display: block;
+					margin-bottom: 10px;
+				}
+
+				.spinner-border{
+					margin: 20px auto;
+					display: block;
+				}
+
+			}
+
+			&__item{
+				box-shadow: 0px 4px 5px rgba(0, 0, 0, .1);
+				border: 0.5px solid #D0D0D0;
+				margin: 10px 0;
+				padding: 5px 10px;
+				border-radius: 3px;
+				cursor: pointer;
+				user-select: none;
+
+				&.blocked{
+					cursor: not-allowed;
+					background-color: #EEE;
+				}
+			}
+		}
+	}
+
+	.modal{
+		display: block;
+		&-dialog{
+		    z-index: 9999;
+		}
+		&-backdrop{
+			opacity: 0.5;
+		}
+		&-footer{
+			p{
+				margin-bottom: 0;
+			}
+			.spinner-border{
+				height: 20px;
+				width: 20px;
+			}
+		}
+
+		form{
+			p.error{
+				color: red;
+				font-size: 12px;
+			}
+
+			input.error, textarea.error{
+				border: 1px solid red;
+			}
+		}
+	}
+	
+}
